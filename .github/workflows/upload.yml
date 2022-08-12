@@ -33,6 +33,8 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
         python changename.py
+      env:
+        PYOPENJTALK_BUILD_VERSION: 0.3.0dev1
     - name: Publish package
       run: |
         twine upload dist/* -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }}

@@ -31,6 +31,8 @@ jobs:
     - name: build_whl
       run: |
         python setup.py sdist bdist_wheel
+      env:
+        PYOPENJTALK_BUILD_VERSION: 0.3.0dev1
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.os }}-${{ matrix.python-version }}
