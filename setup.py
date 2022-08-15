@@ -3,6 +3,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import tarfile
 from distutils.errors import DistutilsExecError
 from distutils.spawn import spawn
 from distutils.version import LooseVersion
@@ -10,19 +11,12 @@ from glob import glob
 from itertools import chain
 from os.path import exists, join
 from subprocess import run
+from urllib.request import urlretrieve
 
 import numpy as np
 import setuptools.command.build_py
 import setuptools.command.develop
-import six
 from setuptools import Extension, find_packages, setup
-
-if six.PY2:
-    from urllib import urlretrieve
-else:
-    from urllib.request import urlretrieve
-
-import tarfile
 
 platform_is_windows = sys.platform == "win32"
 
@@ -180,8 +174,11 @@ with tarfile.open(filename, mode="r|gz") as f:
     f.extractall(path="./")
 os.remove(filename)
 print("Extract complete")
-shutil.copytree(f"./{_dict_folder_name}", f"./pyopenjtalk/{_dict_folder_name}")
-sys.stdout.flush()
+try:
+    shutil.copytree(f"./{_dict_folder_name}", f"./pyopenjtalk/{_dict_folder_name}")
+    sys.stdout.flush()
+except FileExistsError:
+    pass
 
 # generate config.h for mecab
 # NOTE: need to run cmake to generate config.h
@@ -323,8 +320,6 @@ setup(
     install_requires=[
         "numpy >= 1.20.0",
         "cython >= " + min_cython_ver,
-        "six",
-        "tqdm",
     ],
     tests_require=["nose", "coverage"],
     extras_require={
