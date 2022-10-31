@@ -178,7 +178,7 @@ for s in [
 ext_modules = [
     Extension(
         name="pyopenjtalk.openjtalk",
-        sources=[join("pyopenjtalk", "openjtalk" + ext)] + all_src,
+        sources=[join("pyopenjtalk", f"openjtalk{ext}")] + all_src,
         include_dirs=[np.get_include()] + include_dirs,
         extra_compile_args=[],
         extra_link_args=[],
@@ -196,13 +196,14 @@ ext_modules = [
     )
 ]
 
+
 # Extension for HTSEngine backend
 htsengine_src_top = join("lib", "hts_engine_API", "src")
 all_htsengine_src = glob(join(htsengine_src_top, "lib", "*.c"))
 ext_modules += [
     Extension(
         name="pyopenjtalk.htsengine",
-        sources=[join("pyopenjtalk", "htsengine" + ext)] + all_htsengine_src,
+        sources=[join("pyopenjtalk", f"htsengine{ext}")] + all_htsengine_src,
         include_dirs=[np.get_include(), join(htsengine_src_top, "include")],
         extra_compile_args=[],
         extra_link_args=[],
@@ -216,6 +217,7 @@ ext_modules += [
     )
 ]
 
+
 # Adapted from https://github.com/pytorch/pytorch
 cwd = os.path.dirname(os.path.abspath(__file__))
 if os.getenv("PYOPENJTALK_BUILD_VERSION"):
@@ -227,7 +229,7 @@ else:
             .decode("ascii")
             .strip()
         )
-        version += "+" + sha[:7]
+        version += f"+{sha[:7]}"
     except subprocess.CalledProcessError:
         pass
     except IOError:  # FileNotFoundError for python 3
@@ -242,10 +244,10 @@ class build_py(setuptools.command.build_py.build_py):
     @staticmethod
     def create_version_file():
         global version, cwd
-        print("-- Building version " + version)
+        print(f"-- Building version {version}")
         version_path = os.path.join(cwd, "pyopenjtalk", "version.py")
         with open(version_path, "w") as f:
-            f.write("__version__ = '{}'\n".format(version))
+            f.write(f"__version__ = '{version}'\n")
 
 
 class develop(setuptools.command.develop.develop):
@@ -277,7 +279,7 @@ setup(
     cmdclass=cmdclass,
     install_requires=[
         "numpy >= 1.20.0",
-        "cython >= " + min_cython_ver,
+        f"cython >= {min_cython_ver}",
         "six",
         "tqdm",
     ],

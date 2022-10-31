@@ -55,7 +55,7 @@ class _TqdmUpTo(tqdm):  # type: ignore
 def _extract_dic():
     global OPEN_JTALK_DICT_DIR
     filename = pkg_resources.resource_filename(__name__, "dic.tar.gz")
-    print('Downloading: "{}"'.format(_DICT_URL))
+    print(f'Downloading: "{_DICT_URL}"')
     with _TqdmUpTo(
         unit="B",
         unit_scale=True,
@@ -65,7 +65,7 @@ def _extract_dic():
     ) as t:  # all optional kwargs
         urlretrieve(_DICT_URL, filename, reporthook=t.update_to)
         t.total = t.n
-    print("Extracting tar file {}".format(filename))
+    print(f"Extracting tar file {filename}")
     with tarfile.open(filename, mode="r|gz") as f:
         f.extractall(path=pkg_resources.resource_filename(__name__, ""))
     OPEN_JTALK_DICT_DIR = pkg_resources.resource_filename(
