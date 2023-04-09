@@ -74,25 +74,22 @@ if cython:
     cmdclass = {"build_ext": custom_build_ext}
 else:
     ext = ".cpp"
-    cmdclass = {}
-    if not os.path.exists(join("pyopenjtalk", "openjtalk" + ext)):
-        raise RuntimeError("Cython is required to generate C++ code")
+cmdclass = {}
+if not os.path.exists(join("pyopenjtalk", f"openjtalk{ext}")):
+    raise RuntimeError("Cython is required to generate C++ code")
 
 # make openmp available
 system = platform.system()
 if system == "Windows":
     extra_compile_args = []
     extra_link_args = ["/openmp"]
-elif system == "Linux":
+elif system == "Linux" or system != "Darwin":
     extra_compile_args = ["-fopenmp"]
     extra_link_args = ["-fopenmp"]
-elif system == "Darwin":
+else:
     os.system("brew install libomp")
     extra_compile_args = ["-Xpreprocessor", "-fopenmp", "-I/usr/local/include"]
     extra_link_args = ["-L/usr/local/lib", "-lomp"]
-else:
-    extra_compile_args = ["-fopenmp"]
-    extra_link_args = ["-fopenmp"]
 
 
 # Workaround for `distutils.spawn` problem on Windows python < 3.9
@@ -169,7 +166,7 @@ print(f"Downloading: {_DICT_URL}")
 urlretrieve(_DICT_URL, filename)
 print("Download complete")
 
-print("Extracting tar file {}".format(filename))
+print(f"Extracting tar file {filename}")
 with tarfile.open(filename, mode="r|gz") as f:
     f.extractall(path="./")
 os.remove(filename)
@@ -220,7 +217,7 @@ for s in [
 ext_modules = [
     Extension(
         name="pyopenjtalk.openjtalk",
-        sources=[join("pyopenjtalk", "openjtalk" + ext)] + all_src,
+        sources=[join("pyopenjtalk", f"openjtalk{ext}")] + all_src,
         include_dirs=[np.get_include()] + include_dirs,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
@@ -244,7 +241,7 @@ all_htsengine_src = glob(join(htsengine_src_top, "lib", "*.c"))
 ext_modules += [
     Extension(
         name="pyopenjtalk.htsengine",
-        sources=[join("pyopenjtalk", "htsengine" + ext)] + all_htsengine_src,
+        sources=[join("pyopenjtalk", f"htsengine{ext}")] + all_htsengine_src,
         include_dirs=[np.get_include(), join(htsengine_src_top, "include")],
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
@@ -269,7 +266,7 @@ else:
             .decode("ascii")
             .strip()
         )
-        version += "+" + sha[:7]
+        version += f"+{sha[:7]}"
     except subprocess.CalledProcessError:
         pass
     except IOError:  # FileNotFoundError for python 3
@@ -284,10 +281,10 @@ class build_py(setuptools.command.build_py.build_py):
     @staticmethod
     def create_version_file():
         global version, cwd
-        print("-- Building version " + version)
+        print(f"-- Building version {version}")
         version_path = os.path.join(cwd, "pyopenjtalk", "version.py")
         with open(version_path, "w") as f:
-            f.write("__version__ = '{}'\n".format(version))
+            f.write(f"__version__ = '{version}'\n")
 
 
 class develop(setuptools.command.develop.develop):
@@ -317,10 +314,7 @@ setup(
     package_data={"": ["htsvoice/*", f"{_dict_folder_name}/*"]},
     ext_modules=ext_modules,
     cmdclass=cmdclass,
-    install_requires=[
-        "numpy >= 1.20.0",
-        "cython >= " + min_cython_ver,
-    ],
+    install_requires=["numpy >= 1.20.0", f"cython >= {min_cython_ver}"],
     tests_require=["nose", "coverage"],
     extras_require={
         "docs": [
