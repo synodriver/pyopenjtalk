@@ -28,13 +28,13 @@ jobs:
         python -m pip install --upgrade wheel
         pip install flake8 pytest
         pip install twine
-        pip install cython tqdm six numpy==1.22.4
+        pip install cython tqdm six numpy==1.24.2
     - name: build_whl
       run: |
         python setup.py sdist bdist_wheel
         python changename.py
       env:
-        PYOPENJTALK_BUILD_VERSION: 0.3.0dev2
+        PYOPENJTALK_BUILD_VERSION: 0.3.0dev3
     - name: Publish package
       run: |
         twine upload dist/* -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }}
