@@ -81,8 +81,8 @@ else:
 # make openmp available
 system = platform.system()
 if system == "Windows":
-    extra_compile_args = []
-    extra_link_args = ["/openmp"]
+    extra_compile_args = ['-openmp']
+    extra_link_args = ['-openmp']
 elif system == "Linux":
     extra_compile_args = ["-fopenmp"]
     extra_link_args = ["-fopenmp"]
@@ -357,6 +357,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development",

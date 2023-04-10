@@ -170,12 +170,10 @@ cdef class OpenJTalk:
 
 
     def _clear(self):
-      Mecab_clear(self.mecab)
-      NJD_clear(self.njd)
-      JPCommon_clear(self.jpcommon)
-
-    def _load(self, bytes dn_mecab):
-        return Mecab_load(self.mecab, dn_mecab)
+        with nogil:
+            Mecab_clear(self.mecab)
+            NJD_clear(self.njd)
+            JPCommon_clear(self.jpcommon)
 
 
     def run_frontend(self, text):
