@@ -116,7 +116,7 @@ cdef class HTSEngine:
 
     cpdef inline np.ndarray[np.float64_t, ndim=1] get_generated_speech(self):
         """Get generated speech"""
-        cdef size_t nsamples = HTS_Engine_get_nsamples(self.engine)
+        cdef int nsamples = HTS_Engine_get_nsamples(self.engine)
         cdef np.ndarray[np.float64_t, ndim=1] speech = np.zeros([nsamples], dtype=np.float64)
         cdef double[::1] speech_view = speech
         cdef int index
