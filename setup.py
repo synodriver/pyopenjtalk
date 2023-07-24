@@ -233,6 +233,7 @@ ext_modules = [
                 ("PACKAGE", '"open_jtalk"'),
                 ("VERSION", '"1.10"'),
                 ("CHARSET_UTF_8", None),
+                ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")
             ]
         ),
     )
@@ -253,6 +254,7 @@ ext_modules += [
         define_macros=custom_define_macros(
             [
                 ("AUDIO_PLAY_NONE", None),
+                ("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")
             ]
         ),
     )
